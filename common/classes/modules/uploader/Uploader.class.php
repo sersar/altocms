@@ -909,19 +909,17 @@ class ModuleUploader extends Module {
             if (!$bMulti) {
                 E::ModuleMresource()->UnlinkFile($sTargetType, $sTargetId, E::UserId());
             }
-
             $sTargetUrl = $this->GetTargetUrl($sTargetType, $sTargetId);
             if ($sTargetUrl) {
                 $oResource->setUrl(E::ModuleMresource()->NormalizeUrl($sTargetUrl));
-                $oResource->setType($sTargetType);
-                $oResource->setUserId(E::UserId());
-                if ((int)$sTargetId === 0) {
-                    $oResource->setTargetTmp(E::ModuleSession()->GetCookie(self::COOKIE_TARGET_TMP));
-                }
-                E::ModuleMresource()->AddTargetRel(array($oResource), $sTargetType, $sTargetId);
-
-                return $oResource;
             }
+            $oResource->setType($sTargetType);
+            $oResource->setUserId(E::UserId());
+            if ((int)$sTargetId === 0) {
+                $oResource->setTargetTmp(E::ModuleSession()->GetCookie(self::COOKIE_TARGET_TMP));
+            }
+            E::ModuleMresource()->AddTargetRel(array($oResource), $sTargetType, $sTargetId);
+            return $oResource;
         }
 
         return FALSE;
@@ -1328,7 +1326,9 @@ class ModuleUploader extends Module {
         if (Config::Get('module.image.autoresize')) {
             $sFile = $this->Url2Dir($sUrl);
             if ($sFile && !F::File_Exists($sFile)) {
-                E::ModuleImg()->Duplicate($sFile);
+                $aAttr = F::File_ImgModAttr($xSize);
+                $aOptions = (isset($aAttr['mod'])) ? ['modifier' => $aAttr['mod']] : null;
+                E::ModuleImg()->Duplicate($sFile, false, $aOptions);
             }
         }
         $sUrl = $this->CompleteUrl($sUrl);
