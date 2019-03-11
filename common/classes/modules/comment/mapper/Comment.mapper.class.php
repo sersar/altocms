@@ -274,7 +274,7 @@ class ModuleComment_MapperComment extends Mapper {
         if ($aRows = $this->oDb->select($sql, $iTargetId, $sTargetType)) {
             return $aRows;
         }
-        return null;
+        return [];
     }
 
     /**

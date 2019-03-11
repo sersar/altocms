@@ -916,7 +916,7 @@ class ModuleImg extends Module {
             }
             ksort($aFoundFiles);
             $sImageFile = reset($aFoundFiles);
-            while (list($iImgSize, $sImgFile) = each($aFoundFiles)) {
+            foreach ($aFoundFiles as $iImgSize => $sImgFile) {
                 if ($iImgSize >= $iSize) {
                     $sImageFile = $sImgFile;
                     break;

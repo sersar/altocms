@@ -84,13 +84,13 @@ class ModuleMresource extends Module {
      * @return bool
      */
     public function IsHashList($aMresources) {
-
+    
         if (is_array($aMresources)) {
-            // first element of array
             reset($aMresources);
-            $aData = each($aMresources);
-            if (($aData['value'] instanceof ModuleMresource_EntityMresource) && ($aData['value']->GetHash() === $aData['key'])) {
-                return true;
+            foreach ($aMresources as $key => $value) {
+                if (($value instanceof ModuleMresource_EntityMresource) && ($value->GetHash() === $key)) {
+                    return true;
+                }
             }
         }
         return false;
