@@ -741,7 +741,30 @@ class ModuleTopic extends Module {
             $iUserId = $oTopic->getUserId();
         }
         $oTopicId = null;
-
+    
+        // Удаление превью копий
+        $aValues = [];
+        if ($aData = $this->GetTopicValuesByArrayId(array($iTopicId))) {
+            $aValues = $aData[$iTopicId];
+        }
+        if ($oType = E::ModuleTopic()->GetContentTypeByUrl($oTopic->getType())) {
+            if ($aFields = $oType->getFields()) {
+                foreach ($aFields as $oField) {
+                    if ($oField->getFieldType() == 'single-image-uploader') {
+                        if (isset($aValues[$oField->getFieldId()])) {
+                            E::ModuleMresource()->UnlinkFile($oField->getFieldType() . '-' . $oField->getFieldId(), $iTopicId, $iUserId);
+                        }
+                    }
+                }
+            }
+        }
+        $aMresources = E::ModuleMresource()->GetMresourcesRelByTarget('photoset', $iTopicId);
+        foreach ($aMresources as $oMresource) {
+            if ($oResource = E::ModuleMresource()->GetMresourceById($oMresource->getMresourceId())) {
+                E::ModuleMresource()->DeleteMresources($oResource, TRUE, TRUE);
+            }
+        }
+        
         $oBlog = $oTopic->GetBlog();
         // * Если топик успешно удален, удаляем связанные данные
         if ($bResult = $this->oMapper->DeleteTopic($iTopicId)) {
@@ -2949,7 +2972,7 @@ class ModuleTopic extends Module {
                                 }
                             } else {
                                 // Топик редактируется, просто обновим поле
-                                $aMresourceRel = E::ModuleMresource()->GetMresourcesRelByTargetAndUser($sTargetType, $iTargetId, E::UserId());
+                                $aMresourceRel = E::ModuleMresource()->GetMresourcesRelByTargetAndUser($sTargetType, $iTargetId, $oTopic->getUserId());
                                 if ($aMresourceRel) {
                                     $oResource = array_shift($aMresourceRel);
                                     $sData = $oResource->getMresourceId();

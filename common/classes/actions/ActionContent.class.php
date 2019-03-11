@@ -234,11 +234,11 @@ class ActionContent extends Action {
         $_REQUEST['topic_show_photoset'] = 1;
 
         // * Если нет временного ключа для нового топика, то генерируем; если есть, то загружаем фото по этому ключу
-        if ($sTargetTmp = E::ModuleSession()->GetCookie('ls_photoset_target_tmp')) {
-            E::ModuleSession()->SetCookie('ls_photoset_target_tmp', $sTargetTmp, 'P1D', false);
+        if ($sTargetTmp = E::ModuleSession()->GetCookie(ModuleUploader::COOKIE_TARGET_TMP)) {
+            E::ModuleSession()->SetCookie(ModuleUploader::COOKIE_TARGET_TMP, $sTargetTmp, 'P1D', false);
             E::ModuleViewer()->Assign('aPhotos', E::ModuleTopic()->GetPhotosByTargetTmp($sTargetTmp));
         } else {
-            E::ModuleSession()->SetCookie('ls_photoset_target_tmp', F::RandomStr(), 'P1D', false);
+            E::ModuleSession()->SetCookie(ModuleUploader::COOKIE_TARGET_TMP, F::RandomStr(), 'P1D', false);
         }
 
         // Если POST-запрос, то обрабатываем отправку формы
@@ -386,7 +386,10 @@ class ActionContent extends Action {
 
         // * Запускаем выполнение хуков
         E::ModuleHook()->Run('topic_add_before', array('oTopic' => $oTopic, 'oBlog' => $oBlog));
-
+    
+        // Fix. При добавлении картинки кука слетает у фотосета
+        $sTargetTmp = E::ModuleSession()->GetCookie(ModuleUploader::COOKIE_TARGET_TMP); // hack sersar
+        
         // * Добавляем топик
         if ($this->_addTopic($oTopic)) {
             E::ModuleHook()->Run('topic_add_after', array('oTopic' => $oTopic, 'oBlog' => $oBlog));
@@ -419,17 +422,13 @@ class ActionContent extends Action {
             /**
              * Привязываем фото к ID топика
              */
-            if (isset($aPhotos) && count($aPhotos)) {
-                E::ModuleTopic()->AttachTmpPhotoToTopic($oTopic);
+            if (isset($aPhotoSetData) && isset($aPhotoSetData['count']) && (int)$aPhotoSetData['count'] && $sTargetTmp) {
+                E::ModuleTopic()->AttachTmpPhotoToTopic($oTopic, $sTargetTmp);
             }
 
             // * Удаляем временную куку
-            E::ModuleSession()->DelCookie('ls_photoset_target_tmp');
-
-            // Обработаем фотосет
             if ($this->oContentType->isAllow('photoset') && ($sTargetTmp = E::ModuleSession()->GetCookie(ModuleUploader::COOKIE_TARGET_TMP))) {
-                // Уберем у ресурса флаг временного размещения и удалим из куки target_tmp
-                E::ModuleSession()->DelCookie(ModuleUploader::COOKIE_TARGET_TMP);
+                E::ModuleSession()->DelCookie($sTargetTmp);
             }
 
             // * Добавляем событие в ленту
@@ -900,9 +899,9 @@ class ActionContent extends Action {
         // Если от сервера не пришёл ID топика, то пытаемся определить временный код для нового топика.
         // Если и его нет, то это ошибка
         if (!$iTopicId) {
-            $sTargetId = E::ModuleSession()->GetCookie('ls_photoset_target_tmp');
+            $sTargetId = E::ModuleSession()->GetCookie(ModuleUploader::COOKIE_TARGET_TMP);
             if (!$sTargetId) {
-                $sTargetId = F::GetRequestStr('ls_photoset_target_tmp');
+                $sTargetId = F::GetRequestStr(ModuleUploader::COOKIE_TARGET_TMP);
             }
             if (!$sTargetId) {
                 E::ModuleMessage()->AddError(E::ModuleLang()->Get('system_error'), E::ModuleLang()->Get('error'));

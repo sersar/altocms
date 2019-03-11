@@ -13,7 +13,7 @@ ls.photoset = ( function ($) {
     this.initSwfUpload = function (opt) {
         opt = opt || {};
         opt.button_placeholder_id = 'photoset-start-upload';
-        opt.post_params.ls_photoset_target_tmp = $.cookie('ls_photoset_target_tmp') ? $.cookie('ls_photoset_target_tmp') : 0;
+        opt.post_params.uploader_target_tmp = $.cookie('uploader_target_tmp') ? $.cookie('uploader_target_tmp') : 0;
 
         $(ls.swfupload).unbind('load').bind('load', function () {
             this.swfu = ls.swfupload.init(opt);

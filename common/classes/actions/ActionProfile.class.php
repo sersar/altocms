@@ -576,6 +576,7 @@ class ActionProfile extends Action {
         $oWall->setUserId($this->oUserCurrent->getId());
         $oWall->setText(F::GetRequestStr('sText'));
         $oWall->setPid(F::GetRequestStr('iPid'));
+        $oWall->setLastReply('');
 
         E::ModuleHook()->Run('wall_add_validate_before', array('oWall' => $oWall));
         if ($oWall->_Validate()) {

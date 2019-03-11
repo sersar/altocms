@@ -255,7 +255,11 @@ class ActionBlog extends Action {
             $oBlog->setLimitRatingTopic(floatval(F::GetRequestStr('blog_limit_rating_topic')));
             $oBlog->setUrl(F::GetRequestStr('blog_url'));
             $oBlog->setAvatar(null);
-
+    
+            $oBlog->setCountVote(0);
+            $oBlog->setCountUser(0);
+            $oBlog->setCountTopic(0);
+            
             // * Загрузка аватара блога перенесена в модуль
 //        if ($aUploadedFile = $this->GetUploadedFile('avatar')) {
 //            if ($sPath = E::ModuleBlog()->UploadBlogAvatar($aUploadedFile, $oBlog)) {

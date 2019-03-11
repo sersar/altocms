@@ -40,8 +40,8 @@ ls.photoset = ( function ($) {
     this.initSwfUpload = function (opt) {
         opt = opt || {};
         opt.button_placeholder_id = 'photoset-upload-place';
-        if ($.cookie('ls_photoset_target_tmp')) {
-            opt.post_params.ls_photoset_target_tmp = $.cookie('ls_photoset_target_tmp');
+        if ($.cookie('uploader_target_tmp')) {
+            opt.post_params.uploader_target_tmp = $.cookie('uploader_target_tmp');
         }
 
         var uploadButton = $('#photoset-upload-button');
