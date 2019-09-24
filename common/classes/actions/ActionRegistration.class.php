@@ -110,7 +110,7 @@ class ActionRegistration extends Action {
                             );
                             break;
                         default:
-                            continue;
+                            continue 2;
                             break;
                     }
                     //  Валидируем поле

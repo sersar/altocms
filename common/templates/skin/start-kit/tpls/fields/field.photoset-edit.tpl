@@ -34,7 +34,7 @@
     {/var}
 </script>
 
-{if count($aPhotos)}
+{if is_array($aPhotos) and count($aPhotos)}
     {$ImagesList=""}
     {foreach $aPhotos as $oPhoto}
         {var name="sPhotosetItem" cache=true}

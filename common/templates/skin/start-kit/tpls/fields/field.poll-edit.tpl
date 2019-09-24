@@ -7,7 +7,7 @@
             </a>
         </h5>
     </div>
-    <div id="topic-field-poll" class="panel-collapse collapse {if count($_aRequest.topic_field_answers)>0}in{/if}">
+    <div id="topic-field-poll" class="panel-collapse collapse {if is_array($_aRequest.topic_field_answers) and count($_aRequest.topic_field_answers)>0}in{/if}">
         <div class="panel-body form-group topic-poll-add js-poll-edit">
             <label>{$aLang.topic_question_create_question}:</label>
             <input type="text" value="{$_aRequest.topic_field_question}" name="topic_field_question"
@@ -15,7 +15,7 @@
             <br/>
             <label>{$aLang.topic_question_create_answers}</label>
             <ul class="list-unstyled topic-poll-add-list js-poll-list">
-                {if count($_aRequest.topic_field_answers)>=2}
+                {if is_array($_aRequest.topic_field_answers) and count($_aRequest.topic_field_answers)>=2}
                     {foreach $_aRequest.topic_field_answers as $i=>$sAnswer}
                         <li class="topic-poll-add-item js-poll-item">
                             <input type="text" value="{$sAnswer}" name="topic_field_answers[]"
