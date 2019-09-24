@@ -13,7 +13,11 @@
  *----------------------------------------------------------------------------
  */
 
-F::IncludeLib('phpMailer/PHPMailerAutoload.php');
+use PHPMailer\PHPMailer\PHPMailer;
+
+F::IncludeLib('phpMailer/src/PHPMailer.php');
+F::IncludeLib('phpMailer/src/SMTP.php');
+F::IncludeLib('phpMailer/src/Exception.php');
 
 /**
  * Модуль для отправки почты(e-mail) через phpMailer
@@ -333,7 +337,7 @@ class ModuleMail extends Module {
         try {
             $bResult = $this->oMailer->send();
             $sError = '';
-        } catch (phpmailerException $e) {
+        } catch (\Exception $e) {
             $sError = $e->getMessage();
             $bResult = false;
         }
