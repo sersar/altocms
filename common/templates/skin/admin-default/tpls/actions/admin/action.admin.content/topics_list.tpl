@@ -45,7 +45,7 @@
                         <td class="center">
                             <a href="{$oTopic->getUrlEdit()}" title="{$aLang.action.admin.topic_edit}">
                                 <i class="icon icon-note"></i></a>
-                            <a href="#" class="js-topic-delete" title="{$aLang.topic_delete}">
+                            <a href="#" class="js-topic-delete" data-topic-id="{$oTopic->getId()}" title="{$aLang.topic_delete}">
                                 <i class="icon icon-trash"></i></a>
                         </td>
                     </tr>
@@ -60,10 +60,16 @@
 </div>
 
 <script>
-    $(function(){
-        $('.js-topic-delete').click(function(){
-            ls.modal.confirm(ls.lang.get('topic_delete_confirm_title'), ls.lang.get('topic_delete_confirm_text'), function() {
-                document.location = '{router page='content'}delete/{$oTopic->getId()}/?security_key={$ALTO_SECURITY_KEY}';
+    $(function() {
+        $('.js-topic-delete').on('click', function() {
+            let iTopic = $(this).data('topic-id');
+            ls.modal.confirm({
+                    title: ls.lang.get('topic_delete_confirm_title'),
+                    message: ls.lang.get('topic_delete_confirm_text', { title: '#' + iTopic })
+                }, {
+                onConfirm: function () {
+                    window.location.href = '{router page='content'}delete/' + iTopic + '/?security_key={$ALTO_SECURITY_KEY}';
+                }
             });
             return false;
         });
